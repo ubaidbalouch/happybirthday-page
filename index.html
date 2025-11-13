@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 18th Birthday, Laiba Khan!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Playfair Display', serif; background: radial-gradient(circle at center, #370a59 0%, #170728 100%); min-height: 100vh; overflow: hidden; }
+        .heart-pulse { animation: pulse 1.5s infinite alternate; filter: drop-shadow(0 0 10px #f472b6); }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+        #confettiCanvas { position: absolute; top: 0; left: 0; z-index: 10; pointer-events: none; }
+        .glowing-card { box-shadow: 0 0 30px rgba(244,114,182,.7), 0 0 60px rgba(244,114,182,.4); transition: all .5s ease-in-out; min-height: 350px; }
+        .glowing-card:hover { transform: translateY(-5px); }
+
+        /* CAKE */
+        .perspective-1000 { perspective: 1000px; }
+        .cake-layer-top, .cake-layer-mid, .cake-layer-bot {
+            background: linear-gradient(to bottom, #fce4ec, #f8bbd0); border-radius: 50% / 15%; position: relative;
+            box-shadow: 0 8px 15px rgba(0,0,0,.2), inset 0 -5px 10px rgba(0,0,0,.1); margin: 0 auto; border: 3px solid #f472b6;
+        }
+        .cake-layer-top { width:160px; height:55px; } .cake-layer-mid { width:190px; height:60px; } .cake-layer-bot { width:220px; height:65px; }
+        .icing-drip { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 120%; height: 20px; background: #fff1f8; border-radius: 50%; box-shadow: 0 5px 10px rgba(0,0,0,.15); z-index: 1; }
+        .icing-top { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); width: 90%; height: 12px; background: #fff1f8; border-radius: 50% / 30%; box-shadow: 0 2px 5px rgba(0,0,0,.1); }
+        .candle-group { position:relative; width:10px; }
+        .candle-body { width:10px; height:38px; background: linear-gradient(to top, #ff6b6b, #ff9999); border-radius:3px; box-shadow:0 0 8px rgba(255,107,107,.6); }
+        .candle-body::after{ content:''; position:absolute; top:-3px; left:50%; transform:translateX(-50%); width:4px; height:6px; background:#fff; border-radius:2px; }
+        .flame{ position:absolute; top:-12px; left:50%; transform:translateX(-50%); width:8px; height:14px; background:radial-gradient(circle,#ffcc00 30%,#ff6b35 70%); border-radius:50% 50% 50% 50%/60% 60% 40% 40%; box-shadow:0 0 12px #ffcc00,0 0 20px #ff9900; animation:flame-flicker .3s infinite alternate; z-index:10; }
+        @keyframes flame-flicker{ from{transform:translateX(-50%) scale(1);opacity:1} to{transform:translateX(-50%) scale(1.15);opacity:.85} }
+
+        .gift-box{width:250px;height:250px;background:#ff69b4;position:relative;margin:0 auto;border-radius:10px; box-shadow:0 0 20px rgba(255,105,180,.5);transition:all 1s ease;}
+        .gift-box.open{transform:scale(1.2);background:transparent;box-shadow:none;}
+        .gift-content{display:none;flex-direction:column;align-items:center;opacity:0;animation:fadeIn 1s forwards;}
+        .gift-box.open .gift-content{display:flex;}
+        @keyframes fadeIn{to{opacity:1}}
+        .rose-img,.chocolate-img{width:150px;height:auto;margin-bottom:10px;}
+        .final-message{animation:bounceIn 2s ease-in-out;text-shadow:0 0 10px #ff69b4;}
+        @keyframes bounceIn{ 0%{transform:scale(.5);opacity:0} 50%{transform:scale(1.2);opacity:1} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
+        .beating-heart { animation: beat 1.2s infinite; }
+        @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+        .final-heart { animation: pulse 1.5s infinite; }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <canvas id="confettiCanvas" class="w-full h-full"></canvas>
+
+    <audio id="birthdaySong" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-happy-birthday-to-you-female-voice-305.mp3" type="audio/mpeg">
+    </audio>
+
+    <main id="mainCard" class="relative z-20 w-full max-w-md glowing-card bg-white/10 backdrop-blur-sm rounded-3xl p-8 sm:p-10 text-center text-white border border-pink-400/30">
+
+        <!-- STAGE 1 -->
+        <div id="initialState" class="space-y-6">
+            <h1 class="text-4xl sm:text-5xl font-bold text-pink-300">A Special Message for You</h1>
+            <p class="text-xl sm:text-2xl text-pink-200">It's a big day! Press the heart to begin...</p>
+            <svg id="initialHeart" class="heart-pulse w-16 h-16 mx-auto text-red-500 hover:text-red-400 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        </div>
+
+        <!-- STAGE 2 -->
+        <div id="messageState" class="hidden space-y-8">
+            <h1 class="text-5xl font-extrabold text-yellow-300 mb-4">Happy 18th Birthday!</h1>
+            <h2 class="text-3xl font-bold text-pink-300">To Dearest Laiba Khan,</h2>
+            <p class="text-lg leading-relaxed text-gray-100">
+                18 years ago, this world was blessed with someone truly special — you. Happy 18th Birthday! I hope your day is filled with laughter, love, and everything that makes your heart happy. You deserve all the happiness in the world, because you make life brighter just by being in it.
+            </p>
+            <div class="pt-4 flex flex-col items-center space-y-4">
+                <p class="text-xl font-bold text-yellow-100 flex items-center space-x-2">
+                    <span>Click heart again</span>
+                    <svg class="w-6 h-6 text-yellow-100 animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-5-7l5 5 5-5"/>
+                    </svg>
+                </p>
+                <svg id="nextHeart" class="heart-pulse w-12 h-12 text-red-400 cursor-pointer hover:text-red-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- STAGE 3 – CAKE -->
+        <div id="cakeState" class="hidden space-y-6">
+            <h1 class="text-4xl font-extrabold text-pink-300 drop-shadow-lg">Make a Wish!</h1>
+            <div class="relative mx-auto w-72 perspective-1000">
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-8 bg-gradient-to-b from-gray-400 to-gray-600 rounded-full shadow-2xl -z-10"></div>
+                <div class="relative mx-auto">
+                    <div class="cake-layer-top relative mx-auto mb-1"><div class="icing-drip"></div><div class="icing-top"></div></div>
+                    <div class="cake-layer-mid relative mx-auto mb-1"><div class="icing-drip"></div></div>
+                    <div class="cake-layer-bot relative mx-auto"><div class="icing-drip"></div></div>
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 flex justify-center gap-3 -mt-5 z-50">
+                        <div class="candle-group"><div class="candle-body"></div><div class="flame"></div></div>
+                        <div class="candle-group"><div class="candle-body"></div><div class="flame"></div></div>
+                        <div class="candle-group"><div class="candle-body"></div><div class="flame"></div></div>
+                        <div class="candle-group"><div class="candle-body"></div><div class="flame"></div></div>
+                        <div class="candle-group"><div class="candle-body"></div><div class="flame"></div></div>
+                    </div>
+                    <p class="absolute top-4 left-1/2 transform -translate-x-1/2 text-3xl font-bold text-pink-900 z-40" style="font-family:'Dancing Script',cursive;text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff;">Laiboo</p>
+                </div>
+            </div>
+            <button id="cakeActionButton" class="mt-8 w-full max-w-xs mx-auto px-6 py-4 bg-yellow-400 text-purple-900 font-extrabold text-xl rounded-full shadow-lg hover:scale-105 active:bg-yellow-500">
+                Blow out the Candles
+            </button>
+            <button id="celebrateButton" class="hidden mt-4 w-full max-w-xs mx-auto px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-extrabold text-xl rounded-full shadow-lg hover:scale-105">
+                Let's Celebrate!
+            </button>
+        </div>
+
+        <!-- STAGE 4 – LOCAL VIDEO (WITH SOUND) -->
+        <div id="videoState" class="hidden fixed inset-0 bg-black z-50 flex items-center justify-center">
+            <video id="localVideo" class="w-full h-full" autoplay playsinline></video>
+        </div>
+
+        <!-- STAGE 5 – GIFT -->
+        <div id="giftState" class="hidden space-y-6">
+            <h1 class="text-4xl font-extrabold text-pink-300">Surprise!</h1>
+            <div id="giftBox" class="gift-box">
+                <div class="gift-content">
+                    <img src="https://t3.ftcdn.net/jpg/06/39/91/02/360_F_639910203_MbwWy4aHH2cFD7uaZ76jlea00oYZy3S3.jpg" alt="Red Rose" class="rose-img">
+                    <img src="https://m.media-amazon.com/images/I/61eN3MCA9zL._AC_UF350,350_QL80_.jpg" alt="Cadbury Dairy Milk" class="chocolate-img">
+                </div>
+            </div>
+            <button id="acceptGiftButton" class="hidden mt-4 w-full max-w-xs mx-auto px-6 py-4 bg-green-400 text-white font-extrabold text-xl rounded-full shadow-lg hover:scale-105">
+                Accept the Gift
+            </button>
+        </div>
+
+        <!-- FINAL MESSAGE + LAST HEART -->
+        <div id="finalMessage" class="hidden final-message space-y-4">
+            <h2 class="text-5xl font-extrabold text-yellow-300">Happy Birthday</h2>
+            <p class="text-3xl text-pink-200">Always stay blessed</p>
+            <svg class="beating-heart w-20 h-20 mx-auto text-pink-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+
+            <div class="mt-6 space-y-2">
+                <p class="text-sm text-pink-200 font-medium">Click this heart last time, I have your beautiful picture</p>
+                <svg id="finalHeart" class="final-heart w-10 h-10 mx-auto text-red-400 cursor-pointer hover:text-red-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Particles
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+        class Particle {
+            constructor(x, y, isFinal = false) {
+                const speed = isFinal ? Math.random()*8+4 : Math.random()*3+1;
+                this.x = x; this.y = y; this.vx = (Math.random()-0.5)*speed; this.vy = -(Math.random()*speed);
+                this.radius = isFinal ? Math.random()*3+1 : Math.random()*2+1;
+                this.life = isFinal ? 200 : 100;
+                this.color = ['#F472B6','#FDE68A','#FEF3C7','#ff85a1'][Math.floor(Math.random()*4)];
+                this.isFinal = isFinal;
+            }
+            update() { this.vy += this.isFinal ? 0.2 : 0.05; this.x += this.vx * (this.isFinal?1:0.5); this.y += this.vy * (this.isFinal?1:0.5); this.life--; this.vx *= 0.99; this.vy *= 0.99; }
+            draw() { ctx.globalAlpha = Math.max(0, this.life/(this.isFinal?200:100)); ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fill(); ctx.globalAlpha = 1; }
+        }
+
+        function createBurst(count, isFinal = false) {
+            const rect = document.getElementById('mainCard').getBoundingClientRect();
+            const cx = rect.left + rect.width/2; const cy = rect.top + rect.height/2;
+            for(let i=0;i<count;i++) particles.push(new Particle(cx,cy,isFinal));
+        }
+
+        function animate() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            particles.forEach(p=> {p.update();p.draw();});
+            particles = particles.filter(p=>p.life>0);
+            requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+        setInterval(()=>createBurst(3),1000);
+
+        // Audio
+        const birthdaySong = document.getElementById('birthdaySong');
+        document.getElementById('initialHeart').addEventListener('click',()=>{ 
+            document.getElementById('initialState').classList.add('hidden'); 
+            document.getElementById('messageState').classList.remove('hidden'); 
+            createBurst(50); 
+            birthdaySong.play().catch(()=>{}); 
+            birthdaySong.pause(); 
+            birthdaySong.currentTime = 0; 
+        });
+
+        document.getElementById('nextHeart').addEventListener('click',()=>{ 
+            document.getElementById('messageState').classList.add('hidden'); 
+            document.getElementById('cakeState').classList.remove('hidden'); 
+            createBurst(50); 
+            birthdaySong.currentTime = 0; 
+            birthdaySong.play(); 
+        });
+
+        let blownOut = false;
+        document.getElementById('cakeActionButton').addEventListener('click',()=>{ 
+            if(!blownOut){ 
+                document.querySelectorAll('.flame').forEach(f=>f.style.display='none'); 
+                document.getElementById('cakeActionButton').textContent='Cut the Cake'; 
+                createBurst(30); 
+                blownOut = true; 
+            } else{ 
+                createBurst(400,true); 
+                document.getElementById('cakeActionButton').classList.add('hidden'); 
+                document.getElementById('celebrateButton').classList.remove('hidden'); 
+            } 
+        });
+
+        // CELEBRATE → PLAY LOCAL VIDEO WITH SOUND
+        const video = document.getElementById('localVideo');
+        document.getElementById('celebrateButton').addEventListener('click',()=>{
+            document.getElementById('cakeState').classList.add('hidden');
+            document.getElementById('videoState').classList.remove('hidden');
+            
+            // YAHAN APNI VIDEO KA NAAM DAALO (jaise: laiba-song.mp4)
+            video.src = "birthday-video.mp4";  
+            video.muted = false;
+            video.volume = 1.0;
+            video.play().catch(err => {
+                console.log("Autoplay blocked, but will play on user click");
+            });
+            
+            createBurst(200,true);
+
+            video.onended = () => {
+                document.getElementById('videoState').classList.add('hidden');
+                document.getElementById('giftState').classList.remove('hidden');
+                createBurst(300, true);
+                setTimeout(() => {
+                    document.getElementById('giftBox').classList.add('open');
+                    document.querySelector('.gift-content').style.display = 'flex';
+                }, 300);
+                setTimeout(() => {
+                    document.getElementById('acceptGiftButton').classList.remove('hidden');
+                }, 800);
+            };
+        });
+
+        // Accept Gift
+        document.getElementById('acceptGiftButton').addEventListener('click',()=>{
+            createBurst(600,true);
+            document.getElementById('giftState').classList.add('hidden');
+            document.getElementById('finalMessage').classList.remove('hidden');
+        });
+
+        // FINAL HEART → OPEN PICTURE
+        document.getElementById('finalHeart').addEventListener('click', () => {
+            createBurst(300, true);
+            window.open('https://share.google/images/Oseqg4R0SjsiS6CoZ', '_blank');
+        });
+    </script>
+</body>
+</html>
